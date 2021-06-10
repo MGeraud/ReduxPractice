@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
 
 import Notification from "./components/UI/Notification";
-import {cartAction, sendCartData} from "./store/cart-slice";
+import {fetchCartDatas, sendCartData} from "./store/cart-actions";
 
 // pour eviter message de notification au chargement
 let isInitial = true;
@@ -17,6 +17,11 @@ function App() {
 
     //récup du cart mis à jour
     const cart = useSelector(state => state.cart);
+
+    // chargement des données en bdd au chargement de la page ou rechargement
+    useEffect(() =>{
+        dispatcher(fetchCartDatas())
+    },[dispatcher])
     //utilisation de useEffect prenant en compte la maj du cart pour envoi http =>>> Problème override la database avec panier vide quand reload
     useEffect(() => {
         if(isInitial){

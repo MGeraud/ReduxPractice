@@ -1,15 +1,19 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {uiAction} from "./ui-slice";
-
 
 const cartSlice = createSlice({
     name:'cart',
     initialState: {
         items: [],
-        totalQuantity: 0
+        totalQuantity: 0,
+        changed : false,
     },
     reducers:{
+        replaceCart(state, action){
+          state.totalQuantity = action.payload.totalQuantity;
+          state.items = action.payload.items;
+        },
         addItem(state,action){
+            state.changed = true;
             const newItem = action.payload;
             const existingItem = state.items.find(item => item.id === newItem.id);
             if (!existingItem){
@@ -27,6 +31,7 @@ const cartSlice = createSlice({
             state.totalQuantity++;
         },
         removeItem(state,action){
+            state.changed = true;
             const id = action.payload;
             const itemToRemove = state.items.find(item => item.id === id);
             if (itemToRemove.quantity === 1) {
@@ -41,45 +46,7 @@ const cartSlice = createSlice({
 
 })
 
-// mise en place d'un action creator pour envoi requete backend
-export const sendCartData = (cart) => {
-    return async (dispatch) => {
-        dispatch(
-            uiAction.showNotification({
-            status: 'pending',
-            title: 'sending...',
-            message: 'sending cart datas'
-        }));
 
-        const sendRequest = async () => {
-            const response = await fetch('https://react-course-4cec8-default-rtdb.europe-west1.firebasedatabase.app/cart.json', {
-                method: 'PUT',
-                body: JSON.stringify(cart)
-            });
-            if (!response.ok) {
-                throw new Error('Sending data failed.');
-            };
-        }
-
-        try {
-            await sendRequest();
-            dispatch(uiAction.showNotification({
-                status: 'succes',
-                title: 'datas sent',
-                message: 'cart datas sent'
-            }));
-        } catch (error){
-            dispatch(uiAction.showNotification({
-                status: 'error',
-                title: 'error sending cart...',
-                message: ' sending cart data failed...'
-            }))
-        }
-
-
-
-    }
-}
 
 export const cartAction = cartSlice.actions;
 export default cartSlice;
