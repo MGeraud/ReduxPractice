@@ -9,7 +9,9 @@ const ProductItem = (props) => {
   const dispatcher = useDispatch();
 
   const addToCartHandler = () => {
-    dispatcher(cartAction.addItem({id, title, price}))
+    dispatcher(cartAction.addItem({id, title, price}));
+    //on peut envoyer au backend depuis ici cet objet puis traiter coté backend l'add à la quantité sinon comme ici, on fait le traitement coté front avant envoi au backend
+
   }
 
   return (
